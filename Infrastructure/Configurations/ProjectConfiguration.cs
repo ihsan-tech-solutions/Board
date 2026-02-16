@@ -16,8 +16,7 @@ namespace Infrastructure.Configurations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            builder.Property(p => p.ClientName)
-                   .HasMaxLength(200);
+            
 
             builder.Property(p => p.StartDate)
                    .IsRequired();

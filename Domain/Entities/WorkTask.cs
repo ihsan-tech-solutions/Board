@@ -7,5 +7,6 @@ namespace Domain.Entities
         public string Description { get; set; } = string.Empty;
         public DateTime DueDate { get; set; }
         public int Priority { get; set; }
+        public ICollection<TaskDependency> Dependencies { get; set; } = new List<TaskDependency>();
     }
 }

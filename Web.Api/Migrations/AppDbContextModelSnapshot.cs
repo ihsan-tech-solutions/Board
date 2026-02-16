@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Web.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -92,7 +92,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("Attachment");
+                    b.ToTable("Attachments");
                 });
 
             modelBuilder.Entity("Comment", b =>
@@ -121,7 +121,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("comments");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Domain.Entities.AuditTrail", b =>
@@ -158,7 +158,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AuditTrail");
+                    b.ToTable("AuditTrails");
                 });
 
             modelBuilder.Entity("Domain.Entities.Project", b =>
@@ -178,14 +178,11 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -195,7 +192,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("Domain.Entities.WorkTask", b =>
@@ -209,16 +206,13 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
@@ -231,8 +225,7 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -243,7 +236,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("StatusId");
 
-                    b.ToTable("Tasks", (string)null);
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("Label", b =>
@@ -271,7 +264,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("labels");
+                    b.ToTable("Labels");
                 });
 
             modelBuilder.Entity("Notification", b =>
@@ -298,7 +291,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("notification");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Organization", b =>
@@ -322,7 +315,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("organization");
+                    b.ToTable("Organizations");
                 });
 
             modelBuilder.Entity("PriorityEntity", b =>
@@ -349,7 +342,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("priority");
+                    b.ToTable("Priorities");
                 });
 
             modelBuilder.Entity("ProjectMember", b =>
@@ -366,7 +359,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("ProjectId", "UserId");
 
-                    b.ToTable("projectMember");
+                    b.ToTable("ProjectMembers");
                 });
 
             modelBuilder.Entity("RefreshToken", b =>
@@ -399,7 +392,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("refreshToken");
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Role", b =>
@@ -427,7 +420,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("roles");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Setting", b =>
@@ -455,7 +448,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("setting");
+                    b.ToTable("Settings");
                 });
 
             modelBuilder.Entity("Status", b =>
@@ -485,7 +478,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("status");
+                    b.ToTable("Statuses");
                 });
 
             modelBuilder.Entity("TaskAssignment", b =>
@@ -501,7 +494,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("TaskId", "AssignedTo");
 
-                    b.ToTable("taskAssignment");
+                    b.ToTable("TaskAssignments");
                 });
 
             modelBuilder.Entity("TaskDependency", b =>
@@ -516,7 +509,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("DependsOnTaskId");
 
-                    b.ToTable("taskDependency");
+                    b.ToTable("TaskDependencies");
                 });
 
             modelBuilder.Entity("TaskHistory", b =>
@@ -545,7 +538,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("taskHistory");
+                    b.ToTable("TaskHistories");
                 });
 
             modelBuilder.Entity("TaskLabel", b =>
@@ -560,7 +553,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("LabelId");
 
-                    b.ToTable("taskLabel");
+                    b.ToTable("TaskLabels");
                 });
 
             modelBuilder.Entity("Team", b =>
@@ -587,7 +580,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("team");
+                    b.ToTable("Teams");
                 });
 
             modelBuilder.Entity("TeamMember", b =>
@@ -603,7 +596,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("TeamId", "UserId");
 
-                    b.ToTable("teamMember");
+                    b.ToTable("TeamMembers");
                 });
 
             modelBuilder.Entity("TimeEntry", b =>
@@ -637,7 +630,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("timeEntry");
+                    b.ToTable("TimeEntries");
                 });
 
             modelBuilder.Entity("User", b =>
@@ -676,7 +669,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("user");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("UserRole", b =>
@@ -722,7 +715,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("userSession");
+                    b.ToTable("UserSessions");
                 });
 
             modelBuilder.Entity("Attachment", b =>
@@ -774,13 +767,13 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.WorkTask", "DependsOnTask")
                         .WithMany()
                         .HasForeignKey("DependsOnTaskId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.WorkTask", "Task")
-                        .WithMany("Dependencies")
+                        .WithMany()
                         .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("DependsOnTask");
@@ -816,11 +809,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Task");
-                });
-
-            modelBuilder.Entity("Domain.Entities.WorkTask", b =>
-                {
-                    b.Navigation("Dependencies");
                 });
 
             modelBuilder.Entity("Label", b =>
