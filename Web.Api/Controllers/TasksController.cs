@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Infrastructure.Persistence;
+﻿using Application.DTOs.Tasks;
 using Domain.Entities;
+using Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
 {
@@ -9,72 +9,135 @@ namespace Presentation.Controllers
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly ITaskRepository _repository;
 
-        public TasksController(AppDbContext context)
+        public TasksController(ITaskRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
+
+        // =======================
+        // CREATE TASK
+        // =======================
         [HttpPost]
-        public async Task<IActionResult> CreateTask(WorkTask task)
+        public async Task<IActionResult> CreateTask(CreateTaskRequestDto dto)
         {
-            _context.Tasks.Add(task);
-            await _context.SaveChangesAsync();
+            var task = new WorkTask
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                DueDate = dto.DueDate,
+                Priority = dto.Priority
+            };
 
-            return Ok(task);
+            await _repository.AddAsync(task);
+
+            var response = new TaskResponseDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                DueDate = task.DueDate,
+                Priority = task.Priority,
+                CreatedAt = task.CreatedAt
+            };
+
+            return Ok(response);
         }
+
+        // =======================
+        // GET ALL TASKS
+        // =======================
         [HttpGet]
         public async Task<IActionResult> GetAllTasks()
         {
-            var tasks = await _context.Tasks
-                .Where(t => !t.IsDeleted)
-                .ToListAsync();
+            var tasks = await _repository.GetAllAsync();
 
-            return Ok(tasks);
+            var response = tasks
+                .Where(t => !t.IsDeleted)
+                .Select(t => new TaskResponseDto
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    Description = t.Description,
+                    DueDate = t.DueDate,
+                    Priority = t.Priority,
+                    CreatedAt = t.CreatedAt
+                });
+
+            return Ok(response);
         }
+
+        // =======================
+        // GET TASK BY ID
+        // =======================
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTaskById(Guid id)
         {
-            var task = await _context.Tasks.FindAsync(id);
-
+            var task = await _repository.GetByIdAsync(id);
             if (task == null || task.IsDeleted)
                 return NotFound();
 
-            return Ok(task);
+            var response = new TaskResponseDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                DueDate = task.DueDate,
+                Priority = task.Priority,
+                CreatedAt = task.CreatedAt
+            };
+
+            return Ok(response);
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(Guid id, WorkTask updatedTask)
-        {
-            var task = await _context.Tasks.FindAsync(id);
 
+        // =======================
+        // UPDATE TASK
+        // =======================
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTask(Guid id, UpdateTaskRequestDto dto)
+        {
+            var task = await _repository.GetByIdAsync(id);
             if (task == null || task.IsDeleted)
                 return NotFound();
 
-            task.Title = updatedTask.Title;
-            task.Description = updatedTask.Description;
-            task.DueDate = updatedTask.DueDate;
-            task.Priority = updatedTask.Priority;
+            task.Title = dto.Title;
+            task.Description = dto.Description;
+            task.DueDate = dto.DueDate;
+            task.Priority = dto.Priority;
             task.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            await _repository.UpdateAsync(task);
 
-            return Ok(task);
+            var response = new TaskResponseDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                DueDate = task.DueDate,
+                Priority = task.Priority,
+                CreatedAt = task.CreatedAt
+            };
+
+            return Ok(response);
         }
+
+        // =======================
+        // DELETE TASK (SOFT DELETE)
+        // =======================
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(Guid id)
         {
-            var task = await _context.Tasks.FindAsync(id);
-
+            var task = await _repository.GetByIdAsync(id);
             if (task == null || task.IsDeleted)
                 return NotFound();
 
             task.IsDeleted = true;
             task.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            await _repository.UpdateAsync(task);
 
-            return Ok("Task deleted successfully");
+            return Ok(new { message = "Task deleted successfully" });
         }
     }
 }
-        
