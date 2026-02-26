@@ -1,12 +1,12 @@
-﻿
-namespace Domain.Entities
+﻿namespace Application.DTOs.Tasks
 {
-    public class WorkTask : BaseEntity
+    public class TaskResponseDto
     {
+        public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public DateTime DueDate { get; set; }
         public int Priority { get; set; }
-        public ICollection<TaskDependency> Dependencies { get; set; } = new List<TaskDependency>();
+        public DateTime CreatedAt { get; set; }
     }
 }

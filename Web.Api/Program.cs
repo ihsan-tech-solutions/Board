@@ -1,4 +1,6 @@
+using Domain.Interfaces;
 using Infrastructure.Persistence;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,21 +9,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
+        "Server=localhost\\SQLEXPRESS;Database=BoardDB;Trusted_Connection=True;TrustServerCertificate=True",
         sqlOptions =>
         {
             sqlOptions.MigrationsAssembly("Infrastructure"); // Specify project containing migrations
         }));
 
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
 var app = builder.Build();
-////ApplyMigrations(app);
+void ApplyMigrations(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<DbContext>();
+    var pendingMigrations = db.Database.GetPendingMigrations();
+    db.Database.MigrateAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -36,7 +43,7 @@ app.MapControllers();
 
 app.Run();
 
-void ApplyMigrations(WebApplication app)
+//void ApplyMigrations(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<DbContext>();
